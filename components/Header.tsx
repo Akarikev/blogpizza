@@ -16,10 +16,16 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
+type routesType = {
+  label: string;
+  active?: boolean;
+  href: string;
+};
+
 function Header() {
   const pathname = usePathname();
 
-  const routes = useMemo(
+  const routes: routesType[] = useMemo(
     () => [
       {
         label: "News",
@@ -55,7 +61,7 @@ function Header() {
         <div>
           <h1 className="flex gap-2 font-bold text-pink-600 text-2xl">
             blogpizza
-            <PizzaIcon className="" />
+            <PizzaIcon />
           </h1>
         </div>
 
@@ -69,7 +75,7 @@ function Header() {
                     `
                     hover:text-pink-600 text-muted-foreground
             `,
-                    item.active && "text-pink-600 font-bold"
+                    item.active && "text-pink-600 underline font-medium"
                   )}
                 >
                   {item.label}
