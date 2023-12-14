@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import LoadingUI from "./LoadingUI";
 import Image from "next/image";
 import Link from "next/link";
+import ErrorUI from "./ErrorUI";
 
 type articlesType = {
   author?: string;
@@ -31,15 +32,23 @@ function NewsPage() {
     );
     return response.data;
   };
-  const { isLoading, error, data } = useQuery(["articles"], fetchNews, {
-    onSuccess: (data) => {
-      // Set the article data when the query is successful
-      setArticleData(data?.articles);
-    },
-  });
+  const { isLoading, error, data, isError } = useQuery(
+    ["articles"],
+    fetchNews,
+    {
+      onSuccess: (data) => {
+        // Set the article data when the query is successful
+        setArticleData(data?.articles);
+      },
+    }
+  );
 
   if (isLoading) {
     return <LoadingUI />;
+  }
+
+  if (isError) {
+    return <ErrorUI />;
   }
   const formatDateTime = (timestamp: string): string => {
     const options: Intl.DateTimeFormatOptions = {
@@ -55,10 +64,10 @@ function NewsPage() {
   };
 
   return (
-    <div className=" px-10 md:px-28 lg:px-52 mt-5">
+    <div className=" px-10 md:px-28  mt-5">
       <div>
         <div>
-          {articleData.slice(1, 2).map((article) => {
+          {articleData.slice(0, 1).map((article) => {
             const formattedDateTime = formatDateTime(article.publishedAt);
             return (
               <div
@@ -101,22 +110,23 @@ function NewsPage() {
           })}
         </div>
 
-        <div className="">
+        <div>
           <div>
             <h1 className="pt-10 pb-10 font-semibold text-xl text-pink-600">
               Latest News
             </h1>
 
-            <div className="flex flex-row justify-between ">
-              {articleData.map((article) => {
+            <div className="flex flex-col  md:flex-col lg:flex-row gap-5">
+              {articleData.map((articleItem) => {
                 return (
-                  <div key={article.author}>
+                  <div key={articleItem.title} className="lg:flex lg:flex-row ">
                     <div>
                       <img
-                        src={article.urlToImage}
-                        alt={article.title}
-                        className="w-[200px] h-[100px]"
+                        src={articleItem.urlToImage}
+                        alt={articleItem.title}
+                        className="w-full h-full  rounded-md"
                       />
+                      <h1>{articleItem.title}</h1>
                     </div>
                   </div>
                 );
